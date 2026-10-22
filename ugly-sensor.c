@@ -17,7 +17,7 @@ typedef struct{
  		uint16_t value;
 		} reg_t;
 
-int g_count = 0;
+int count = 0;
 reg_t *g_regs = NULL;
 
 uint16_t read_reg(uint16_t address){
@@ -43,9 +43,7 @@ int32_t init_sensor(char *name)
 				return -1;
 		}
 
- 		if (snprintf(device_name, sizeof(device_name), "%s", name) < 0){
- 				return -1;
-		}
+ 		strcpy(device_name, name);
 
 		g_regs = malloc(REG_COUNT * sizeof(reg_t));
 		if (g_regs == NULL){
@@ -65,22 +63,26 @@ int32_t init_sensor(char *name)
 
 		switch (g_regs[1].value){
 				case SENSOR_MODE_ONE:
-   						g_count = 1;
+   						count = 1;
 						break;
 
 				case SENSOR_MODE_TWO:
-						g_count = 2;
+						count = 2;
 						break;
 
 				default:
-						g_count = 0;
+						count = 0;
 						break;
 		}
 
-		if (g_count > 1){
+		if (count > 1){
+				free(g_regs);
+				g_regs = NULL;
 				ret = 0;
 		}
-		else if (g_count == 1){
+		else if (count==1){
+				free(g_regs);
+				g_regs = NULL;
 				ret = -1;
 		}
 
